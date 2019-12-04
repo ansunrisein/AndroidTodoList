@@ -7,7 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.androidtodolist.adapters.Adapter
-import com.example.androidtodolist.fragments.BottomDrawerFragment
+import com.example.androidtodolist.fragments.CreateBottomDrawerFragment
+import com.example.androidtodolist.fragments.EditBottomDrawerFragment
+import com.example.androidtodolist.repositories.Repository
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -18,7 +20,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
 
         createRecycler()
-        fab.setOnClickListener {showBottomDrawer()}
+        fab.setOnClickListener { showBottomDrawer() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -28,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> true
+            R.id.action_clear -> true
             else -> super.onOptionsItemSelected(item)
         }
     }
@@ -36,11 +38,18 @@ class MainActivity : AppCompatActivity() {
     private fun createRecycler() {
         val recycleListView: RecyclerView = findViewById(R.id.recyclerview)
         recycleListView.layoutManager = LinearLayoutManager(this)
-        recycleListView.adapter = Adapter(listOf("1", "2", "3","1", "2", "3","1", "2", "3","1", "2", "3","1", "2", "3","1", "2", "3","1", "2", "3"))
+        recycleListView.adapter = Adapter(Repository.items,
+            fun(position: Int): EditBottomDrawerFragment{
+                val fragment = EditBottomDrawerFragment(position)
+                fragment.show(supportFragmentManager, fragment.tag)
+
+                return fragment
+            }
+        )
     }
 
     private fun showBottomDrawer() {
-        val bottomNavDrawerFragment = BottomDrawerFragment()
+        val bottomNavDrawerFragment = CreateBottomDrawerFragment()
         bottomNavDrawerFragment.show(supportFragmentManager, bottomNavDrawerFragment.tag)
     }
 }
